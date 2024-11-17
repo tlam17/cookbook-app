@@ -200,6 +200,28 @@ const getRecipeByDifficulty = async (req, res) => {
   }
 };
 
+const addRecipe = async (req, res) => {
+    try {
+        // Extract recipe data from the request body
+        const { RecipeID, Name, Directions, Cuisine, Difficulty } = req.params;
+
+        // Insert the recipe into the Recipes table
+        const recipeQuery = `INSERT INTO Recipes (r.RecipeID, r.Name, r.Directions, r.Cuisine, r.Difficulty) VALUES ($1, $2, $3, $4, $5);`;
+
+        // Execute the recipe insert query
+        const recipeResult = await pool.query(recipeQuery, [RecipeID, Name, Directions, Cuisine, Difficulty]);
+
+        // Send a response back with success message and the RecipeID of the newly added recipe
+        res.status(201).json({
+            message: 'Recipe added successfully',
+            RecipeID: recipeResult.rows[0].RecipeID
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to add recipe. ' + error.message });
+    }
+};
+
 module.exports = {
   getAllRecipes,
   getRecipeByID,
