@@ -200,11 +200,62 @@ const getRecipeByDifficulty = async (req, res) => {
   }
 };
 
+const addRecipe = async (req, res) => {
+  try {
+    // Extract recipe data from the request body
+    const { RecipeID, Name, Directions, Cuisine, Difficulty, UserID, Ingredients } = req.body;
+
+    // Check if required fields are provided
+    if (!RecipeID || !Name || !Directions || !Cuisine || !Difficulty || !UserID) {
+      return res.status(400).json({ error: "Missing required fields." });
+    }
+
+    // Insert the recipe into the Recipes table
+    const recipeQuery = `
+      INSERT INTO Recipes (RecipeID, Name, Directions, Cuisine, Difficulty)
+      VALUES ($1, $2, $3, $4, $5)
+    `;
+    await pool.query(recipeQuery, [RecipeID, Name, Directions, Cuisine, Difficulty]);
+
+    // Associate the recipe with the user in the Makes_A table
+    const makesAQuery = `
+      INSERT INTO Makes_A (UserID, RecipeID)
+      VALUES ($1, $2)
+    `;
+    await pool.query(makesAQuery, [UserID, RecipeID]);
+
+    // Add ingredients to the Ingredients table (if provided)
+    if (Ingredients && Array.isArray(Ingredients)) {
+      const ingredientQueries = Ingredients.map((ingredient) => {
+        const { Quantity, IngredientName, Measurement } = ingredient;
+        return pool.query(
+          `
+          INSERT INTO Ingredients (RecipeID, Quantity, IngredientName, Measurement)
+          VALUES ($1, $2, $3, $4)
+          `,
+          [RecipeID, Quantity, IngredientName, Measurement]
+        );
+      });
+      await Promise.all(ingredientQueries);
+    }
+
+    // Send a success response
+    res.status(201).json({
+      message: 'Recipe added successfully',
+      RecipeID: RecipeID,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to add recipe. ' + error.message });
+  }
+};
+
 module.exports = {
   getAllRecipes,
   getRecipeByID,
   getRecipeByName,
   getRecipeByAuthor,
   getRecipeByCuisine,
-  getRecipeByDifficulty
+  getRecipeByDifficulty,
+  addRecipe
 }
