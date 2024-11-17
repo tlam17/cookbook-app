@@ -206,7 +206,7 @@ const addRecipe = async (req, res) => {
         const { RecipeID, Name, Directions, Cuisine, Difficulty } = req.params;
 
         // Insert the recipe into the Recipes table
-        const recipeQuery = `INSERT INTO Recipes (r.RecipeID, r.Name, r.Directions, r.Cuisine, r.Difficulty) VALUES ($1, $2, $3, $4, $5);`;
+        const recipeQuery = `INSERT INTO Recipes (recipeid, Name, Directions, Cuisine, Difficulty) VALUES ($1, $2, $3, $4, $5) RETURNING RecipeID;`;
 
         // Execute the recipe insert query
         const recipeResult = await pool.query(recipeQuery, [RecipeID, Name, Directions, Cuisine, Difficulty]);
@@ -223,10 +223,11 @@ const addRecipe = async (req, res) => {
 };
 
 module.exports = {
-  getAllRecipes,
-  getRecipeByID,
-  getRecipeByName,
-  getRecipeByAuthor,
-  getRecipeByCuisine,
-  getRecipeByDifficulty
-}
+    getAllRecipes,
+    getRecipeByID,
+    getRecipeByName,
+    getRecipeByAuthor,
+    getRecipeByCuisine,
+    getRecipeByDifficulty,
+    addRecipe
+};

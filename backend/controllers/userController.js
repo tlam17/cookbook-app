@@ -10,8 +10,6 @@ const getAllUsers = async (req, res) => {
   };
 
 
-const  
-
 module.exports = {
     getAllUsers
 };
