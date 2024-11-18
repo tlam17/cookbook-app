@@ -9,6 +9,6 @@
     "\\frontend\\public",
     "\\frontend\\src"
   ],
-  "SelectedNode": "\\backend\\db",
+  "SelectedNode": "\\backend\\controllers\\userController.js",
   "PreviewInSolutionExplorer": false
 }

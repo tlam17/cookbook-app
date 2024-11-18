@@ -43,6 +43,9 @@ const deleteUser = async (req, res) => {
             return res.status(404).json({ error: "User not found." });
         }
 
+        const makes_query = 'DELETE FROM Makes_A WHERE UserID = $1 RETURNING *;';
+        const makes_result = await pool.query(makes_query, [UserID]);
+
         res.status(200).json({
             message: "user deleted successfully.",
             deletedUser: result.rows[0]
