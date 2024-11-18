@@ -9,5 +9,7 @@ router.get('/author/:author', recipeController.getRecipeByAuthor);
 router.get('/cuisine/:cuisine', recipeController.getRecipeByCuisine);
 router.get('/difficulty/:difficulty', recipeController.getRecipeByDifficulty);
 router.post('/add', recipeController.addRecipe);
+router.delete('/RecipeID/:RecipeID', recipeController.deleteRecipe);
+router.patch('/RecipeID/:RecipeID', recipeController.updateRecipe);
 
 module.exports = router;
