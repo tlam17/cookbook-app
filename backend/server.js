@@ -9,6 +9,7 @@ app.use(express.json());
 app.use('/recipes', recipeRoutes);
 app.use('/users', userRoutes);
 app.use('/register', userRoutes);
+app.use('/users/:userId', userRoutes); 
 
 app.listen(PORT, () => {
   console.log(`Server started on PORT ${PORT}`);
