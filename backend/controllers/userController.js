@@ -83,9 +83,27 @@ const deleteUser = async (req, res) => {
   }
 };
 
-// TODO
-// Retrieve User's Recipes
+// Get a User's Recipes
+// Test with: curl -X GET http://localhost:3000/users/00001/recipes
+const getUserRecipes = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const query = `
+      SELECT r.RecipeID, r.Name, r.Directions, r.Cuisine, r.Difficulty
+      FROM Recipes r
+      JOIN Makes_A m ON r.RecipeID = m.RecipeID
+      WHERE m.UserID = $1
+    `;
+    const result = await pool.query(query, [userId]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'No recipes found for this user' });
+    }
+    res.status(200).json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 module.exports = {
-  getAllUsers, registerUser, updateUser, deleteUser,
+  getAllUsers, registerUser, updateUser, deleteUser, getUserRecipes,
 };

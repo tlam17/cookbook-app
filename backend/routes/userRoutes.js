@@ -12,5 +12,6 @@ router.patch('/:userId', userController.updateUser);
 router.delete('/:userId', userController.deleteUser);
 
 // Route to retrieve a user's recipes
+router.get('/:userId/recipes', userController.getUserRecipes);
 
 module.exports = router;
