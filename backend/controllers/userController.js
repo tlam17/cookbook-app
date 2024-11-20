@@ -1,5 +1,4 @@
 const pool = require('../db/pool');
-const bcrypt = require('bcrypt');
 
 const getAllUsers = async (req, res) => {
   try {
@@ -10,6 +9,7 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+// Test with: curl -X POST http://localhost:3000/users/register  -H "Content-Type: application/json"  -d '{"userId":"user008", "email":"lebron@james.com", "password": 12345, "name":"Lebron" }'
 const registerUser = async (req, res) => {
   const { userId, email, password, name } = req.body;
   try {
@@ -24,6 +24,9 @@ const registerUser = async (req, res) => {
   }
 };
 
+// Test updating email: curl -X PATCH http://localhost:3000/users/user008 \
+//                      -H "Content-Type: application/json" \ 
+//                      -d '{"name": "Updated Name", "password": "newpass", "email":"newemail@example.com"}'
 const updateUser = async (req, res) => {
   const { userId } = req.params; 
   const { name, password, email } = req.body; 
@@ -61,7 +64,28 @@ const updateUser = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-  
+
+// TODO
+// User Authentication
+
+// Delete User Account
+// Test with (Change USERID to user to be deleted): curl -X DELETE http://localhost:3000/users/USERID
+const deleteUser = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const result = await pool.query('DELETE FROM Users WHERE UserID = $1', [userId]);
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json({ message: 'User account deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// TODO
+// Retrieve User's Recipes
+
 module.exports = {
-    getAllUsers, registerUser, updateUser, 
+  getAllUsers, registerUser, updateUser, deleteUser,
 };
