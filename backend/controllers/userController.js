@@ -65,8 +65,28 @@ const updateUser = async (req, res) => {
   }
 };
 
-// TODO
-// User Authentication
+// User Login Authentication
+// Test with: curl -X POST http://localhost:3000/users/login -H "Content-Type: application/json" -d '{"userId":"00001", "password": "abcde"}'
+const authenticateUser = async (req, res) => {
+  const { userId, password } = req.body;
+
+  try {
+    // Check if the user exists and the password matches
+    const result = await pool.query(
+      'SELECT * FROM Users WHERE UserID = $1 AND Password = $2',
+      [userId, password]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({ message: 'Invalid UserID or Password' });
+    }
+
+    // Authentication successful
+    res.status(200).json({ message: 'Authentication successful', user: result.rows[0] });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 // Delete User Account
 // Test with (Change USERID to user to be deleted): curl -X DELETE http://localhost:3000/users/USERID
@@ -105,5 +125,5 @@ const getUserRecipes = async (req, res) => {
 };
 
 module.exports = {
-  getAllUsers, registerUser, updateUser, deleteUser, getUserRecipes,
+  getAllUsers, registerUser, updateUser, deleteUser, getUserRecipes, authenticateUser
 };
