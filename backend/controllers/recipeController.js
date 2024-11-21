@@ -250,6 +250,87 @@ const addRecipe = async (req, res) => {
   }
 };
 
+const deleteRecipe = async (req, res) => {
+    try {
+        const { RecipeID } = req.params;
+
+        if (!RecipeID) {
+            return res.status(400).json({ error: "RecipeID is required." });
+        }
+
+        // If ON DELETE CASCADE is not enabled, delete ingredients manually
+        await pool.query(`DELETE FROM Ingredients WHERE RecipeID = $1;`, [RecipeID]);
+
+        // Delete the recipe
+        const result = await pool.query(`DELETE FROM Recipes WHERE RecipeID = $1 RETURNING *;`, [RecipeID]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: "Recipe not found." });
+        }
+
+        res.status(200).json({
+            message: "Recipe and its ingredients deleted successfully.",
+            deletedRecipe: result.rows[0],
+        });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to delete recipe. " + error.message });
+    }
+};
+
+const updateRecipe = async (req, res) => {
+    try {
+        const { RecipeID } = req.params;
+        const { Name, Directions, Cuisine, Difficulty } = req.body;
+
+        if (!RecipeID) {
+            return res.status(400).json({ error: "RecipeID is required." });
+        }
+
+        // Build dynamic query
+        const fields = [];
+        const values = [];
+        let query = 'UPDATE Recipes SET ';
+
+        if (Name) {
+            fields.push('Name = $' + (fields.length + 1));
+            values.push(Name);
+        }
+        if (Directions) {
+            fields.push('Directions = $' + (fields.length + 1));
+            values.push(Directions);
+        }
+        if (Cuisine) {
+            fields.push('Cuisine = $' + (fields.length + 1));
+            values.push(Cuisine);
+        }
+        if (Difficulty) {
+            fields.push('Difficulty = $' + (fields.length + 1));
+            values.push(Difficulty);
+        }
+
+        if (fields.length === 0) {
+            return res.status(400).json({ error: "No fields provided for update." });
+        }
+
+        query += fields.join(', ') + ' WHERE RecipeID = $' + (fields.length + 1) + ' RETURNING *;';
+        values.push(RecipeID);
+
+        // Execute the update query
+        const result = await pool.query(query, values);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: "Recipe not found." });
+        }
+
+        res.status(200).json({
+            message: "Recipe updated successfully.",
+            updatedRecipe: result.rows[0],
+        });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to update recipe. " + error.message });
+    }
+};
+
 module.exports = {
   getAllRecipes,
   getRecipeByID,
@@ -257,5 +338,7 @@ module.exports = {
   getRecipeByAuthor,
   getRecipeByCuisine,
   getRecipeByDifficulty,
-  addRecipe
+  addRecipe,
+  deleteRecipe,
+  updateRecipe,
 }
