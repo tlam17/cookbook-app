@@ -4,8 +4,8 @@ const pool = new Pool({
     host: "localhost",
     port: 5432,
     user: "postgres",
-    password: "Imag14coll",
-    database: "recipedb",
+    password: "password",
+    database: "cse412project",
 });
 
 module.exports = pool
