@@ -257,6 +257,8 @@ const deleteRecipe = async (req, res) => {
         if (!RecipeID) {
             return res.status(400).json({ error: "RecipeID is required." });
         }
+        const makes_query = 'DELETE FROM Makes_A WHERE RecipeID = $1 RETURNING *;';
+        await pool.query(makes_query, [RecipeID]);
 
         // If ON DELETE CASCADE is not enabled, delete ingredients manually
         await pool.query(`DELETE FROM Ingredients WHERE RecipeID = $1;`, [RecipeID]);
