@@ -22,6 +22,13 @@ const HomePage = () => {
     fetchRecipes();
   }, []);
 
+  // Remove recipe from the list after deletion
+  const handleRecipeDelete = (deletedRecipeID) => {
+    setRecipes((prevRecipes) =>
+      prevRecipes.filter((recipe) => recipe.RecipeID.trim() !== deletedRecipeID)
+    );
+  };
+
   if (loading) {
     return <p>Loading recipes...</p>;
   }
@@ -33,7 +40,7 @@ const HomePage = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {recipes.map((recipe) => (
-        <RecipeCard key={recipe.RecipeID.trim()} recipe={recipe} />
+        <RecipeCard key={recipe.RecipeID.trim()} recipe={recipe} onDelete={handleRecipeDelete}/>
       ))}
     </div>
   );
