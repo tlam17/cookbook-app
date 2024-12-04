@@ -1,15 +1,13 @@
-import { Button } from "@/components/ui/button";
+import { Toaster } from "@/components/ui/toaster"
 import HomePage from "./pages/home";
 
 function App() {
   return (
     <>
-      <div className="px-20">
-        <Button>Click me</Button>
-      </div>
       <div className="mt-10">
         <HomePage />
       </div>
+      <Toaster></Toaster>
     </>
   );
 }
