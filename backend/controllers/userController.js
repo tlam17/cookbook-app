@@ -66,19 +66,19 @@ const updateUser = async (req, res) => {
 };
 
 // User Login Authentication
-// Test with: curl -X POST http://localhost:3000/users/login -H "Content-Type: application/json" -d '{"userId":"00001", "password": "abcde"}'
+// Test with: curl -X POST http://localhost:3000/users/login -H "Content-Type: application/json" -d '{"email":"otchoy@asu.edu", "password": "abcde"}'
 const authenticateUser = async (req, res) => {
-  const { userId, password } = req.body;
+  const { email, password } = req.body;
 
   try {
     // Check if the user exists and the password matches
     const result = await pool.query(
-      'SELECT * FROM Users WHERE UserID = $1 AND Password = $2',
-      [userId, password]
+      'SELECT * FROM Users WHERE email = $1 AND Password = $2',
+      [email, password]
     );
 
     if (result.rows.length === 0) {
-      return res.status(401).json({ message: 'Invalid UserID or Password' });
+      return res.status(401).json({ message: 'Invalid email or Password' });
     }
 
     // Authentication successful
