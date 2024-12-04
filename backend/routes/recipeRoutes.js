@@ -10,6 +10,6 @@ router.get('/cuisine/:cuisine', recipeController.getRecipeByCuisine);
 router.get('/difficulty/:difficulty', recipeController.getRecipeByDifficulty);
 router.post('/add', recipeController.addRecipe);
 router.delete('/RecipeID/:RecipeID', recipeController.deleteRecipe);
-router.patch('/update/:RecipeID', recipeController.updateRecipe);
+router.put('/update/:RecipeID', recipeController.updateRecipe);
 
 module.exports = router;

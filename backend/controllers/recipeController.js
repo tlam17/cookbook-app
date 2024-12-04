@@ -280,58 +280,86 @@ const deleteRecipe = async (req, res) => {
 };
 
 const updateRecipe = async (req, res) => {
-    try {
-        const { RecipeID } = req.params;
-        const { Name, Directions, Cuisine, Difficulty } = req.body;
+  const client = await pool.connect(); // Use a client for transactions
+  try {
+      const { RecipeID } = req.params;
+      const { Name, Directions, Cuisine, Difficulty, Ingredients } = req.body;
 
-        if (!RecipeID) {
-            return res.status(400).json({ error: "RecipeID is required." });
-        }
+      if (!RecipeID) {
+          return res.status(400).json({ error: "RecipeID is required." });
+      }
 
-        // Build dynamic query
-        const fields = [];
-        const values = [];
-        let query = 'UPDATE Recipes SET ';
+      // Begin transaction
+      await client.query('BEGIN');
 
-        if (Name) {
-            fields.push('Name = $' + (fields.length + 1));
-            values.push(Name);
-        }
-        if (Directions) {
-            fields.push('Directions = $' + (fields.length + 1));
-            values.push(Directions);
-        }
-        if (Cuisine) {
-            fields.push('Cuisine = $' + (fields.length + 1));
-            values.push(Cuisine);
-        }
-        if (Difficulty) {
-            fields.push('Difficulty = $' + (fields.length + 1));
-            values.push(Difficulty);
-        }
+      // Update the recipe fields
+      const fields = [];
+      const values = [];
+      let query = 'UPDATE Recipes SET ';
 
-        if (fields.length === 0) {
-            return res.status(400).json({ error: "No fields provided for update." });
-        }
+      if (Name) {
+          fields.push('Name = $' + (fields.length + 1));
+          values.push(Name);
+      }
+      if (Directions) {
+          fields.push('Directions = $' + (fields.length + 1));
+          values.push(Directions);
+      }
+      if (Cuisine) {
+          fields.push('Cuisine = $' + (fields.length + 1));
+          values.push(Cuisine);
+      }
+      if (Difficulty) {
+          fields.push('Difficulty = $' + (fields.length + 1));
+          values.push(Difficulty);
+      }
 
-        query += fields.join(', ') + ' WHERE RecipeID = $' + (fields.length + 1) + ' RETURNING *;';
-        values.push(RecipeID);
+      if (fields.length > 0) {
+          query += fields.join(', ') + ' WHERE RecipeID = $' + (fields.length + 1) + ' RETURNING *;';
+          values.push(RecipeID);
 
-        // Execute the update query
-        const result = await pool.query(query, values);
+          // Execute the recipe update query
+          const recipeResult = await client.query(query, values);
+          if (recipeResult.rowCount === 0) {
+              throw new Error("Recipe not found.");
+          }
+      }
 
-        if (result.rowCount === 0) {
-            return res.status(404).json({ error: "Recipe not found." });
-        }
+      // Update ingredients if provided
+      if (Ingredients && Array.isArray(Ingredients)) {
+          // Delete existing ingredients for the recipe
+          await client.query('DELETE FROM Ingredients WHERE RecipeID = $1', [RecipeID]);
 
-        res.status(200).json({
-            message: "Recipe updated successfully.",
-            updatedRecipe: result.rows[0],
-        });
-    } catch (error) {
-        res.status(500).json({ error: "Failed to update recipe. " + error.message });
-    }
+          // Insert new ingredients
+          const ingredientQueries = Ingredients.map((ingredient, index) => {
+              const { Quantity, IngredientName, Measurement } = ingredient;
+              return client.query(
+                  `
+                  INSERT INTO Ingredients (RecipeID, Quantity, IngredientName, Measurement)
+                  VALUES ($1, $2, $3, $4);
+                  `,
+                  [RecipeID, Quantity, IngredientName, Measurement]
+              );
+          });
+          await Promise.all(ingredientQueries);
+      }
+
+      // Commit the transaction
+      await client.query('COMMIT');
+
+      res.status(200).json({
+          message: "Recipe and ingredients updated successfully.",
+      });
+  } catch (error) {
+      // Rollback in case of an error
+      await client.query('ROLLBACK');
+      console.error("Failed to update recipe:", error.message);
+      res.status(500).json({ error: "Failed to update recipe. " + error.message });
+  } finally {
+      client.release(); // Release the client back to the pool
+  }
 };
+
 
 module.exports = {
   getAllRecipes,
