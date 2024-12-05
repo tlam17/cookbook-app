@@ -1,34 +1,85 @@
 /* Navbar container */
 .navbar {
-  display: flex;
-  align-items: center; /* Vertically center items */
-  justify-content: space-between; /* Space between title and buttons */
-  background-color: #000; /* Black background */
-  color: #fff; /* White text */
-  padding: 12px 20px; /* Add padding inside the navbar */
-  position: sticky; /* Stick to the top during scrolling */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #000;
+    color: #fff;
+    padding: 12px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+/* Sidebar container */
+.navbar-sidebar {
+  position: fixed;
+  left: -250px; /* Initially off-screen */
   top: 0;
-  z-index: 1000; /* Ensure the navbar stays above other elements */
-  width: 100%; /* Full viewport width */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  box-sizing: border-box; /* Include padding and borders in element's total width/height */
+  width: 250px; /* Width of the sidebar */
+  height: 100%;
+  background-color: #333;
+  transition: left 0.3s ease; /* Smooth transition when opening and closing */
+  z-index: 2000; /* Ensure it's above other elements */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Expanded state of the sidebar */
+.navbar-sidebar.expanded {
+  left: 0; /* Sidebar slides into view */
+}
+
+/* Sidebar content */
+.navbar-sidebar-content {
+  color: #fff;
+  margin-top: 40px;
+}
+
+.navbar-sidebar p {
+  margin: 10px 0;
 }
 
 /* Navbar content container */
 .navbar-container {
-  display: flex;
-  justify-content: space-between; /* Space between the title and buttons */
-  align-items: center; /* Center items vertically */
-  width: 100%; /* Full width */
-  max-width: 1200px; /* Optional: Limit the content width for better layout on larger screens */
-  margin: 0 auto; /* Center the container horizontally */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 /* Navbar title */
 .navbar-title h1 {
-  font-size: 1.5rem; /* Adjust title font size */
-  font-weight: bold; /* Make the title bold */
-  margin: 0; /* Remove default margin */
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* Navbar buttons container */
+.navbar-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+/* Navbar buttons */
+.navbar-button {
+    background-color: transparent;
+    color: inherit;
+    border: 1px solid #fff;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.navbar-button:hover {
+    background-color: #fff;
+    color: #000;
 }
 
 /* Hamburger menu icon */
@@ -51,30 +102,6 @@
   border-radius: 2px; /* Round edges of the lines */
 }
 
-/* Sidebar container */
-.navbar-sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh; /* Full viewport height */
-  width: 0; /* Start hidden */
-  background-color: #111; /* Sidebar background */
-  overflow-x: hidden; /* Hide horizontal scroll */
-  transition: width 0.3s ease; /* Smooth slide-in animation */
-  z-index: 2000; /* Place above the navbar */
-  padding-top: 60px; /* Space from top for content */
-}
-
-.navbar-sidebar.expanded {
-  width: 250px; /* Width of the extended sidebar */
-}
-
-/* Sidebar content */
-.navbar-sidebar-content {
-  color: #fff;
-  padding: 10px 20px;
-}
-  
 /* Close sidebar button */
 .close-sidebar-btn {
   position: absolute;
@@ -93,3 +120,53 @@
   line-height: 1; /* Avoid extra space around the text */
 }
 
+
+
+/* Add Recipe Dialog Content */
+.dialog-content.add-recipe {
+    width: 90%;
+    max-width: 500px;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #000;
+    position: relative;
+    box-sizing: border-box;
+}
+
+    /* Inputs for Add Recipe */
+    .dialog-content.add-recipe input,
+    .dialog-content.add-recipe select,
+    .dialog-content.add-recipe textarea {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1rem;
+        box-sizing: border-box;
+    }
+
+    /* Specific textarea style */
+    .dialog-content.add-recipe textarea {
+        background-color: #fff;
+        color: #000;
+    }
+
+    /* Submit button in Add Recipe dialog */
+    .dialog-content.add-recipe button {
+        background-color: #000;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: bold;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+        .dialog-content.add-recipe button:hover {
+            background-color: #fff;
+            color: #000;
+        }
