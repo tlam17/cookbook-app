@@ -37,6 +37,9 @@
 .navbar-sidebar-content {
   color: #fff;
   margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Add some space between the buttons */
 }
 
 .navbar-sidebar p {
@@ -75,6 +78,7 @@
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.2s ease, color 0.2s ease;
+    width: 100%; /* Make buttons take full width */
 }
 
 .navbar-button:hover {

@@ -4,7 +4,8 @@ const userController = require('../controllers/userController');
 
 router.get('/', userController.getAllUsers);
 router.post('/register', userController.registerUser);
-router.patch('/:userId', userController.updateUser);
+router.patch('/:userId/update', userController.updateUser);
+
 
 // Route to authenticate a user
 router.post('/login', userController.authenticateUser);

@@ -1,5 +1,6 @@
 const pool = require('../db/pool');
 
+
 const getAllUsers = async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM Users');
@@ -9,13 +10,14 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+
 // Test with: curl -X POST http://localhost:3000/users/register  -H "Content-Type: application/json"  -d '{"userId":"user008", "email":"lebron@james.com", "password": 12345, "name":"Lebron" }'
 const registerUser = async (req, res) => {
   const { userId, email, password, name } = req.body;
   try {
     //const hashedPassword = await bcrypt.hash(password, 10);
     const hashedPassword = password;
-    await pool.query('INSERT INTO Users (UserID, Password, Email, Name) VALUES ($1, $2, $3, $4)', 
+    await pool.query('INSERT INTO Users (UserID, Password, Email, Name) VALUES ($1, $2, $3, $4)',
       [userId, hashedPassword, email, name]
     );
     res.status(201).json({ message: 'User registered successfully' });
@@ -24,40 +26,47 @@ const registerUser = async (req, res) => {
   }
 };
 
-// Test updating email: curl -X PATCH http://localhost:3000/users/user008 \
-//                      -H "Content-Type: application/json" \ 
+
+// Test updating email: curl -X PATCH http://localhost:3000/users/00004/update \
+//                      -H "Content-Type: application/json" \
 //                      -d '{"name": "Updated Name", "password": "newpass", "email":"newemail@example.com"}'
 const updateUser = async (req, res) => {
-  const { userId } = req.params; 
-  const { name, password, email } = req.body; 
+  const { userId } = req.params;
+  const { name, password, email } = req.body;
   try {
     const qStrings = [];
     const values = [];
     let query = 'UPDATE Users SET ';
 
+
     if (name) {
-      qStrings.push('Name = $' + (qStrings.length + 1)); 
-      values.push(name); 
+      qStrings.push('Name = $' + (qStrings.length + 1));
+      values.push(name);
     }
-    
+   
     if (password) {
       qStrings.push('Password = $' + (qStrings.length + 1));
-      values.push(password); 
+      values.push(password);
     }
+
 
     if (email) {
       qStrings.push('Email = $' + (qStrings.length + 1));
-      values.push(email); 
+      values.push(email);
     }
+
 
     if (qStrings.length === 0) {
       return res.status(400).json({ message: 'No valid fields provided for update' });
     }
 
-    query += qStrings.join(', ') + ' WHERE UserID = $' + (qStrings.length + 1); 
-    values.push(userId); 
+
+    query += qStrings.join(', ') + ' WHERE UserID = $' + (qStrings.length + 1);
+    values.push(userId);
+
 
     await pool.query(query, values);
+
 
     res.status(200).json({ message: 'User information updated successfully' });
   } catch (error) {
@@ -65,10 +74,12 @@ const updateUser = async (req, res) => {
   }
 };
 
+
 // User Login Authentication
 // Test with: curl -X POST http://localhost:3000/users/login -H "Content-Type: application/json" -d '{"email":"otchoy@asu.edu", "password": "abcde"}'
 const authenticateUser = async (req, res) => {
   const { email, password } = req.body;
+
 
   try {
     // Check if the user exists and the password matches
@@ -77,9 +88,11 @@ const authenticateUser = async (req, res) => {
       [email, password]
     );
 
+
     if (result.rows.length === 0) {
       return res.status(401).json({ message: 'Invalid email or Password' });
     }
+
 
     // Authentication successful
     res.status(200).json({ message: 'Authentication successful', user: result.rows[0] });
@@ -87,6 +100,7 @@ const authenticateUser = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // Delete User Account
 // Test with (Change USERID to user to be deleted): curl -X DELETE http://localhost:3000/users/USERID
@@ -102,6 +116,7 @@ const deleteUser = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // Get a User's Recipes
 // Test with: curl -X GET http://localhost:3000/users/00001/recipes
@@ -127,3 +142,4 @@ const getUserRecipes = async (req, res) => {
 module.exports = {
   getAllUsers, registerUser, updateUser, deleteUser, getUserRecipes, authenticateUser
 };
+

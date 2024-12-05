@@ -2,6 +2,17 @@ import React, { useState } from "react";
 import LoginForm from "@/pages/LoginForm";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
 import "./navbar.css";
 import axios from "axios";
 
@@ -9,9 +20,15 @@ const Navbar = ({ onLoginSuccess }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [ingredients, setIngredients] = useState([]);  // Start with an empty ingredients list
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isUserSettingsOpen, setIsUserSettingsOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [userId, setUserId] = useState(""); // Assuming you have userId available
 
-  const handleLoginSuccess = () => {
+  const handleLoginSuccess = (user) => {
     setIsLoggedIn(true);
+    setUserId(user.userId); // Set userId when login is successful
     if (onLoginSuccess) onLoginSuccess();
   };
 
@@ -35,7 +52,7 @@ const Navbar = ({ onLoginSuccess }) => {
     };
 
     try {
-      await axios.post(`http://localhost:3000/recipes/add`, recipe); // Assuming POST request for adding recipe
+      await axios.post('http://localhost:3000/recipes/add', recipe); // Assuming POST request for adding recipe
     } catch (error) {
       console.error("Error adding recipe:", error);
       alert(`An error occurred while adding the recipe: ${error.message}`);
@@ -61,6 +78,35 @@ const Navbar = ({ onLoginSuccess }) => {
     setIsSidebarOpen(!isSidebarOpen); // Toggle the sidebar state
   };
 
+  const handleSaveUserSettings = async () => {
+    try {
+      const response = await axios.patch(`http://localhost:3000/users/${userId}/update`, {
+        name,
+        password,
+        email,
+      });
+      if (response.status === 200) {
+        console.log("User information updated successfully");
+        setIsUserSettingsOpen(false);
+      }
+    } catch (error) {
+      console.error("Error updating user information:", error);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      const response = await axios.delete(`http://localhost:3000/users/${userId}`);
+      if (response.status === 200) {
+        console.log("User account deleted successfully");
+        setIsLoggedIn(false);
+        setIsSidebarOpen(false); // Close the hamburger menu
+      }
+    } catch (error) {
+      console.error("Error deleting user account:", error);
+    }
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -74,13 +120,45 @@ const Navbar = ({ onLoginSuccess }) => {
         <div className="navbar-title">
           <h1>Recipe App</h1>
         </div>
+      </div>
 
-        <div className="navbar-buttons">
+      {/* Sidebar */}
+      <div className={`navbar-sidebar ${isSidebarOpen ? "expanded" : ""}`}>
+        {isSidebarOpen && (
+          <button className="close-sidebar-btn" onClick={toggleSidebar}>
+            X
+          </button>
+        )}
+        <div className="navbar-sidebar-content">
           {/* Login/Logout Button */}
           {isLoggedIn ? (
+          <>
             <Button className="navbar-button" onClick={handleLogout}>
               Logout
             </Button>
+            <Button className="navbar-button navbar-user-settings" onClick={() => setIsUserSettingsOpen(true)}>
+              User Settings
+            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button className="navbar-button navbar-delete-account">
+                  Delete Account
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="alert-dialog-content">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="alert-dialog-title">Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription className="alert-dialog-description">
+                    This action cannot be undone. This will permanently delete your account and remove your data from our servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="alert-cancel">Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDeleteAccount}>Continue</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </>
           ) : (
             <Dialog>
               <DialogTrigger asChild>
@@ -164,18 +242,25 @@ const Navbar = ({ onLoginSuccess }) => {
         </div>
       </div>
 
-      {/* Sidebar */}
-      <div className={`navbar-sidebar ${isSidebarOpen ? "expanded" : ""}`}>
-        {isSidebarOpen && (
-          <button className="close-sidebar-btn" onClick={toggleSidebar}>
-            X
-          </button>
-        )}
-        <div className="navbar-sidebar-content">
-          <p>Sidebar Content</p>
-          <p>Additional Links</p>
-        </div>
-      </div>
+      {/* User Settings Dialog */}
+      <Dialog open={isUserSettingsOpen} onOpenChange={setIsUserSettingsOpen}>
+        <DialogContent>
+          <h2>Make Changes to Your Account:</h2>
+          <div>
+            <label>Name</label>
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+          </div>
+          <div>
+            <label>Password</label>
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          </div>
+          <div>
+            <label>Email</label>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          </div>
+          <Button onClick={handleSaveUserSettings}>Save</Button>
+        </DialogContent>
+      </Dialog>
     </nav>
   );
 };
