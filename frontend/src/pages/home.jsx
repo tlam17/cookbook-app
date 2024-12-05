@@ -62,6 +62,7 @@ const HomePage = () => {
 
   return (
     <div className="home-container">
+
       {/* Filter UI */}
       <div className="filter-container">
         <Select onValueChange={(value) => setFilterType(value)}>

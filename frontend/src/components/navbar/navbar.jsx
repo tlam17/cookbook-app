@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import LoginForm from "@/pages/LoginForm";
+import SignUpForm from "@/pages/SignUpForm";
 import { Button } from "../ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { FaPlus } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
+import { Dialog, DialogContent, DialogHeader, DialogTrigger, DialogTitle, DialogFooter} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -16,67 +22,106 @@ import {
 import "./navbar.css";
 import axios from "axios";
 
-const Navbar = ({ onLoginSuccess }) => {
+const Navbar = ({ onLoginSuccess, onRecipeAdd }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [ingredients, setIngredients] = useState([]);  // Start with an empty ingredients list
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [ingredients, setIngredients] = useState([]);
   const [isUserSettingsOpen, setIsUserSettingsOpen] = useState(false);
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [userId, setUserId] = useState(""); // Assuming you have userId available
+  const [userId, setUserId] = useState("");
+  const [formData, setFormData] = useState({
+    RecipeID: "",
+    Name: "",
+    Directions: "",
+    Cuisine: "",
+    Difficulty: "",
+  });
+  const [newIngredient, setNewIngredient] = useState({
+    Quantity: "",
+    IngredientName: "",
+    Measurement: "",
+  });
 
-  const handleLoginSuccess = (user) => {
+  // Update state when login is successful
+  const handleLoginSuccess = (id) => {
     setIsLoggedIn(true);
-    setUserId(user.userId); // Set userId when login is successful
-    if (onLoginSuccess) onLoginSuccess();
+    setUserId(id); // Set userId received from LoginForm
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
   };
 
-  const handleAddRecipe = async (e) => {
-    e.preventDefault();
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
-    // Collect form data
-    const formData = new FormData(e.target);
-    const recipe = {
-      RecipeID: formData.get("recipeID"),
-      Name: formData.get("name"),
-      Directions: formData.get("directions"),
-      Cuisine: formData.get("cuisine"),
-      Difficulty: formData.get("difficulty"),
-      UserID: formData.get("userID"),
-      Ingredients: ingredients,
-    };
+  const handleIngredientChange = (field, value) => {
+    setNewIngredient({ ...newIngredient, [field]: value });
+  };
 
-    try {
-      await axios.post('http://localhost:3000/recipes/add', recipe); // Assuming POST request for adding recipe
-    } catch (error) {
-      console.error("Error adding recipe:", error);
-      alert(`An error occurred while adding the recipe: ${error.message}`);
+  const addIngredient = () => {
+    if (newIngredient.Quantity && newIngredient.IngredientName && newIngredient.Measurement) {
+      setIngredients([...ingredients, newIngredient]);
+      setNewIngredient({ Quantity: "", IngredientName: "", Measurement: "" });
     }
   };
 
-  const handleIngredientChange = (index, field, value) => {
-    const newIngredients = [...ingredients];
-    newIngredients[index][field] = value;
-    setIngredients(newIngredients);
-  };
-
-  const handleAddIngredient = () => {
-    setIngredients([...ingredients, { Quantity: "", IngredientName: "", Measurement: "" }]);
-  };
-
   const handleDeleteIngredient = (index) => {
-    const newIngredients = ingredients.filter((_, i) => i !== index);
-    setIngredients(newIngredients);
+    setIngredients(ingredients.filter((_, i) => i !== index));
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen); // Toggle the sidebar state
+  const handleAddRecipe = async () => {
+    const recipe = {
+      RecipeID: formData.RecipeID,
+      Name: formData.Name,
+      Directions: formData.Directions,
+      Cuisine: formData.Cuisine,
+      Difficulty: formData.Difficulty,
+      UserID: userId,
+      Ingredients: ingredients,
+    };
+
+    const missingFields = [];
+    if (!recipe.RecipeID) missingFields.push("RecipeID");
+    if (!recipe.Name) missingFields.push("Name");
+    if (!recipe.Directions) missingFields.push("Directions");
+    if (!recipe.Cuisine) missingFields.push("Cuisine");
+    if (!recipe.Difficulty) missingFields.push("Difficulty");
+    if (!recipe.UserID) missingFields.push("UserID");
+
+    if (missingFields.length > 0) {
+      alert(`Please fill in the following fields: ${missingFields.join(", ")}`);
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:3000/recipes/add", recipe);
+      if (response.status === 201) {
+        alert("Recipe added successfully!");
+
+        // Reset form data and ingredients
+        setFormData({
+          RecipeID: "",
+          Name: "",
+          Directions: "",
+          Cuisine: "",
+          Difficulty: "",
+        });
+        setIngredients([]);
+
+        // Notify parent to fetch recipes
+        onRecipeAdded();
+      }
+    } catch (error) {
+      console.error("Error adding recipe:", error);
+      alert(`Failed to add recipe. ${error.response?.data?.error || error.message}`);
+    }
   };
+  
+
 
   const handleSaveUserSettings = async () => {
     try {
@@ -86,7 +131,7 @@ const Navbar = ({ onLoginSuccess }) => {
         email,
       });
       if (response.status === 200) {
-        console.log("User information updated successfully");
+        alert("User information updated successfully");
         setIsUserSettingsOpen(false);
       }
     } catch (error) {
@@ -98,9 +143,8 @@ const Navbar = ({ onLoginSuccess }) => {
     try {
       const response = await axios.delete(`http://localhost:3000/users/${userId}`);
       if (response.status === 200) {
-        console.log("User account deleted successfully");
+        alert("User account deleted successfully");
         setIsLoggedIn(false);
-        setIsSidebarOpen(false); // Close the hamburger menu
       }
     } catch (error) {
       console.error("Error deleting user account:", error);
@@ -110,157 +154,194 @@ const Navbar = ({ onLoginSuccess }) => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        {/* Sidebar Toggle */}
-        <div className="navbar-menu-icon" onClick={toggleSidebar}>
-          <div className="menu-line"></div>
-          <div className="menu-line"></div>
-          <div className="menu-line"></div>
-        </div>
-
         <div className="navbar-title">
           <h1>Cookbook App</h1>
         </div>
-      </div>
 
-      {/* Sidebar */}
-      <div className={`navbar-sidebar ${isSidebarOpen ? "expanded" : ""}`}>
-        {isSidebarOpen && (
-          <button className="close-sidebar-btn" onClick={toggleSidebar}>
-            X
-          </button>
-        )}
-        <div className="navbar-sidebar-content">
-          {/* Login/Logout Button */}
-          {isLoggedIn ? (
-          <>
-            <Button className="navbar-button" onClick={handleLogout}>
-              Logout
-            </Button>
-            <Button className="navbar-button navbar-user-settings" onClick={() => setIsUserSettingsOpen(true)}>
-              User Settings
-            </Button>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button className="navbar-button navbar-delete-account">
-                  Delete Account
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="alert-dialog-content">
-                <AlertDialogHeader>
-                  <AlertDialogTitle className="alert-dialog-title">Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription className="alert-dialog-description">
-                    This action cannot be undone. This will permanently delete your account and remove your data from our servers.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel className="alert-cancel">Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDeleteAccount}>Continue</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </>
+        <div className="navbar-buttons">
+          {!isLoggedIn ? (
+            <>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="navbar-button">Login</Button>
+                </DialogTrigger>
+                <DialogContent className="dialog-content">
+                  <LoginForm onLoginSuccess={handleLoginSuccess} />
+                </DialogContent>
+              </Dialog>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="navbar-button">Sign Up</Button>
+                </DialogTrigger>
+                <DialogContent className="dialog-content">
+                  <SignUpForm />
+                </DialogContent>
+              </Dialog>
+            </>
           ) : (
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="navbar-button">Login</Button>
-              </DialogTrigger>
-              <DialogContent className="dialog-content">
-                <LoginForm onLoginSuccess={handleLoginSuccess} />
-              </DialogContent>
-            </Dialog>
-          )}
-
-          {/* Add Recipe Button */}
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className="navbar-button navbar-add">Add Recipe</Button>
-            </DialogTrigger>
-            <DialogContent className="dialog-content add-recipe">
-              <form onSubmit={handleAddRecipe}>
-                <h1>Add Recipe</h1>
-                <h2>Please enter in your new recipe details.</h2>
-
-                {/* Recipe Inputs */}
-                <input type="text" name="recipeID" placeholder="Recipe ID" required />
-                <input type="text" name="name" placeholder="Name Of Your Recipe" required />
-                <textarea
-                  name="directions"
-                  placeholder="Recipe Directions"
-                  required
-                  style={{ backgroundColor: "white", color: "black" }}
-                ></textarea>
-                <input type="text" name="cuisine" placeholder="Cuisine Type" required />
-                <select name="difficulty" required style={{ backgroundColor: "white" }}>
-                  <option value="">Select Difficulty</option>
-                  {[1, 2, 3, 4, 5].map((level) => (
-                    <option key={level} value={level}>
-                      {level}
-                    </option>
-                  ))}
-                </select>
-                <input type="text" name="userID" placeholder="User ID" required />
-
-                {/* Ingredient Fields */}
-                {ingredients.map((ingredient, index) => (
-                  <div
-                    key={index}
-                    className="ingredient-fields"
-                    style={{ marginBottom: "10px", borderBottom: "1px solid #ccc", paddingBottom: "10px" }}
-                  >
-                    <input
-                      type="text"
-                      placeholder="Quantity"
-                      value={ingredient.Quantity}
-                      onChange={(e) => handleIngredientChange(index, "Quantity", e.target.value)}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Ingredient Name"
-                      value={ingredient.IngredientName}
-                      onChange={(e) => handleIngredientChange(index, "IngredientName", e.target.value)}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Measurement"
-                      value={ingredient.Measurement}
-                      onChange={(e) => handleIngredientChange(index, "Measurement", e.target.value)}
-                    />
-                    <button type="button" onClick={() => handleDeleteIngredient(index)} style={{ marginLeft: "10px", color: "red" }}>
-                      Delete
-                    </button>
+            <>
+              <Button className="navbar-button" onClick={handleLogout}>
+                Logout
+              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="navbar-button">User Settings</Button>
+                </DialogTrigger>
+                <DialogContent>
+                <DialogHeader>
+                <DialogTitle>Update Your Account</DialogTitle>
+                </DialogHeader>
+                  <div>
+                    <label>Name</label>
+                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
                   </div>
-                ))}
+                  <div>
+                    <label>Password</label>
+                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                  </div>
+                  <div>
+                    <label>Email</label>
+                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  </div>
+                  <Button onClick={handleSaveUserSettings}>Save</Button>
+                </DialogContent>
+              </Dialog>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button className="navbar-button navbar-delete-account">
+                    Delete Account
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="alert-dialog-content">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. Your account and data will be permanently deleted.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteAccount}>Delete</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+              {/* Add Recipe Dialog */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="navbar-button navbar-add">Add Recipe</Button>
+                </DialogTrigger>
+                <DialogContent className="dialog-content">
+                  <DialogHeader>
+                    <DialogTitle className="dialog-title">Add Recipe</DialogTitle>
+                  </DialogHeader>
+                    Enter your recipe details and ingredients below. Click "Save" to add your recipe.
+                  <div className="grid gap-4 py-4">
+                    {/* Recipe Fields */}
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="recipeID">Recipe ID</Label>
+                      <Input
+                        id="recipeID"
+                        name="RecipeID"
+                        value={formData.RecipeID}
+                        onChange={handleInputChange}
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="name">Name</Label>
+                      <Input
+                        id="name"
+                        name="Name"
+                        value={formData.Name}
+                        onChange={handleInputChange}
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="cuisine">Cuisine</Label>
+                      <Input
+                        id="cuisine"
+                        name="Cuisine"
+                        value={formData.Cuisine}
+                        onChange={handleInputChange}
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="difficulty">Difficulty</Label>
+                      <Input
+                        id="difficulty"
+                        name="Difficulty"
+                        type="number"
+                        value={formData.Difficulty}
+                        onChange={handleInputChange}
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="directions">Directions</Label>
+                      <Input
+                        id="directions"
+                        name="Directions"
+                        value={formData.Directions}
+                        onChange={handleInputChange}
+                        className="col-span-3"
+                      />
+                    </div>
 
-                {/* Add Ingredient Button */}
-                <button type="button" onClick={handleAddIngredient}>
-                  Add Ingredient
-                </button>
-                <button type="submit">Submit</button>
-              </form>
-            </DialogContent>
-          </Dialog>
+                    {/* Ingredients Section */}
+                    <div>
+                      <h4 className="text-lg font-semibold">Ingredients</h4>
+                      <ScrollArea className="h-50 w-50 rounded-md border">
+                        <ul className="ingredients-list">
+                          {ingredients.map((ingredient, index) => (
+                            <li key={index}>
+                              <p>{`${ingredient.Quantity} ${ingredient.Measurement} ${ingredient.IngredientName}`}</p>
+                              <Button className="icon-button" onClick={() => handleDeleteIngredient(index)}>
+                                <FaTrash />
+                              </Button>
+                            </li>
+                          ))}
+                        </ul>
+                      </ScrollArea>
+                      <div className="grid grid-cols-4 items-center gap-4 mt-4">
+                        <div className="col-span-3 grid grid-cols-3 gap-4">
+                          <Input
+                            placeholder="Quantity"
+                            name="Quantity"
+                            value={newIngredient.Quantity}
+                            onChange={(e) => handleIngredientChange("Quantity", e.target.value)}
+                          />
+                          <Input
+                            placeholder="Name"
+                            name="IngredientName"
+                            value={newIngredient.IngredientName}
+                            onChange={(e) => handleIngredientChange("IngredientName", e.target.value)}
+                          />
+                          <Input
+                            placeholder="Measurement"
+                            name="Measurement"
+                            value={newIngredient.Measurement}
+                            onChange={(e) => handleIngredientChange("Measurement", e.target.value)}
+                          />
+                        </div>
+                        <div className="flex justify-end">
+                          <Button className="icon-button" onClick={addIngredient}>
+                            <FaPlus />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button onClick={handleAddRecipe}>Save Recipe</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </>
+          )}
         </div>
       </div>
-
-      {/* User Settings Dialog */}
-      <Dialog open={isUserSettingsOpen} onOpenChange={setIsUserSettingsOpen}>
-        <DialogContent>
-          <h2>Make Changes to Your Account:</h2>
-          <div>
-            <label>Name</label>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-          </div>
-          <div>
-            <label>Password</label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-          </div>
-          <div>
-            <label>Email</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          </div>
-          <Button onClick={handleSaveUserSettings}>Save</Button>
-        </DialogContent>
-      </Dialog>
     </nav>
   );
 };
