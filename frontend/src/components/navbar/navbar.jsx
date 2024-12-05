@@ -24,7 +24,7 @@ const Navbar = ({ onLoginSuccess }) => {
     <nav className="navbar">
       <div className="navbar-container">
         <div className="navbar-title">
-          <h1>Recipe App</h1>
+          <h1>Cookbook App</h1>
         </div>
         <div className="navbar-buttons">
           {isLoggedIn ? (

@@ -6,14 +6,24 @@
     padding: 20px; /* Add some padding around the container */
   }
   
-  /* Grid layout for recipe cards */
   .recipe-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
-    gap: 16px; /* Adjust spacing between cards */
-    width: 100%; /* Take full width of the container */
-    max-width: 1200px; /* Limit max width for better alignment */
-    margin-top: 20px; /* Add some space between the navbar and the grid */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px; /* Add space between the cards */
+    margin: 20px auto; /* Center the grid */
+    padding: 16px; /* Add padding to the container */
+    width: 100%;
+    max-width: 1200px; /* Optional: limit the grid width */
+    box-sizing: border-box;
+  }
+  
+  .recipe-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .recipe-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
   
   /* Loading and empty state */
@@ -23,5 +33,62 @@
     color: #6b7280; /* Muted text color */
     margin-top: 40px; /* Add spacing above text */
   }
+
+/* Home container styling */
+.home-container {
+    padding: 20px;
+  }
   
+  /* Filter container styling */
+  .filter-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  
+  /* Filter input styling */
+  .filter-input {
+    width: 300px;
+    color: black; /* Ensure input text is black */
+    background-color: white; /* Ensure input background is white */
+    border: 1px solid #ccc; /* Add a subtle border */
+    padding: 8px;
+    border-radius: 5px;
+  }
+  
+  /* Filter select styling */
+  .filter-select {
+    width: 180px;
+    color: black; /* Ensure dropdown text is black */
+    background-color: white; /* Ensure dropdown background is white */
+    border: 1px solid #ccc; /* Add a subtle border */
+    border-radius: 5px;
+  }
+  
+  /* Dropdown content styling */
+  .filter-select .select-content {
+    color: black; /* Text inside dropdown items */
+    background-color: white; /* Dropdown background */
+    border: 1px solid #ccc;
+  }
+
+  /* Remove hover color for filter input */
+.filter-input:hover {
+    background-color: white; /* Keep background white */
+    border-color: #ccc; /* Maintain original border */
+  }
+
+  /* Remove hover color for filter input */
+.filter-container:hover {
+    background-color: white; /* Keep background white */
+    border-color: #ccc; /* Maintain original border */
+  }
+  
+/* Remove hover color for dropdown items */
+.filter-select .select-content:hover {
+    background-color: white; /* Keep background white */
+    color: black; /* Keep text black */
+  }
   
