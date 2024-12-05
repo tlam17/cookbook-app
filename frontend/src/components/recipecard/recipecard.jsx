@@ -189,7 +189,7 @@ const handleDelete = async () => {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Close</AlertDialogCancel>
+              <AlertDialogCancel className="alert-cancel">Close</AlertDialogCancel>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
@@ -201,9 +201,9 @@ const handleDelete = async () => {
               <FaPencil />
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="dialog-content">
             <DialogHeader>
-              <DialogTitle>Edit Recipe</DialogTitle>
+              <DialogTitle className="dialog-title">Edit Recipe</DialogTitle>
             </DialogHeader>
             <DialogDescription>
               Make changes to your recipe and ingredients here. Click save when you're done.
@@ -326,7 +326,7 @@ const handleDelete = async () => {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel className="alert-cancel">Cancel</AlertDialogCancel>
               <AlertDialogAction onClick={handleDelete}>Continue</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

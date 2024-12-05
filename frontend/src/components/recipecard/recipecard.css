@@ -1,105 +1,57 @@
 /* General card styling */
 .card {
-  width: 280px; /* Reduced width */
-  padding: 12px; /* Reduced padding */
-  border-radius: 10px; /* Slightly smaller corners */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for compact appearance */
+  width: 280px;
+  padding: 12px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 .card:hover {
-  transform: scale(1.03); /* Slightly smaller hover scale */
+  transform: scale(1.03);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Card header styling */
 .card-header {
-  margin-bottom: 8px; /* Reduced spacing */
+  margin-bottom: 8px;
 }
 
 .card-title {
-  font-size: 1.25rem; /* Slightly smaller title */
+  font-size: 1.25rem;
   font-weight: bold;
-  margin-bottom: 4px; /* Reduced margin */
+  margin-bottom: 4px;
+  color: black; /* Explicitly set text color to black */
 }
 
 .card-description {
-  font-size: 0.9rem; /* Slightly smaller font */
-  color: #6b7280; /* Muted text color */
-  margin-bottom: 8px; /* Reduced margin */
+  font-size: 0.9rem;
+  color: black; /* Explicitly set text color to black */
+  margin-bottom: 8px;
 }
 
-/* Card footer styling */
-.card-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 8px; /* Reduced margin */
-  gap: 4px; /* Reduce space between buttons */
-}
-
-/* Icon button styling */
-.icon-button {
-  background: none; /* Remove background */
-  border: none; /* Remove border */
-  color: black; /* Set icon color to black */
-  padding: 0; /* Remove extra padding */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem; /* Adjust icon size */
-  cursor: pointer; /* Add pointer cursor */
-}
-
-.icon-button:hover {
-  background: none; /* Remove background */
-  color: #555; /* Slightly lighter color on hover */
-}
-
-.icon-button:focus {
-  outline: none; /* Remove focus outline */
-  box-shadow: none; /* Remove focus shadow */
-}
-
-/* Alert Dialog Content */
+/* Alert dialog content styling */
 .alert-dialog-content {
-  padding: 16px; /* Reduced padding */
-  border-radius: 10px; /* Slightly smaller corners */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); /* Subtle shadow for compact appearance */
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .alert-dialog-title {
-  font-size: 1.1rem; /* Slightly smaller title */
+  font-size: 1.1rem;
   font-weight: bold;
-  margin-bottom: 10px; /* Reduced margin */
+  margin-bottom: 10px;
+  color: black; /* Explicitly set text color to black */
 }
 
 .alert-dialog-description {
-  font-size: 0.9rem; /* Slightly smaller font */
-  color: #4b5563; /* Slightly darker muted text */
-  line-height: 1.4; /* Reduced line height for compact text */
+  font-size: 0.9rem;
+  color: black; /* Explicitly set text color to black */
+  line-height: 1.4;
 }
 
-/* Compact footer button hover */
-.card-footer button {
-  padding: 4px; /* Reduced padding */
-  border: none;
-  border-radius: 4px; /* Smaller button corners */
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
-}
-
-.card-footer button:hover {
-  transform: scale(1.05); /* Reduced hover scale */
-}
-
-/* Reduce button-text spacing */
-.card-footer .icon-button + .icon-button {
-  margin-left: 4px; /* Reduce spacing between buttons */
-}
-
-.card-footer .icon-button {
-  margin-right: 4px; /* Reduce spacing between button and text */
+.alert-cancel {
+  color: black;
 }
 
 /* Ingredients list styling */
@@ -112,22 +64,124 @@
 .ingredients-list li {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Space out ingredient text and button */
+  justify-content: space-between;
   margin-bottom: 4px;
+  color: black; /* Explicitly set text color to black */
 }
 
-.ingredients-list li .icon-button {
-  margin-left: auto; /* Push the button to the far right */
-  background: none; /* Remove background */
-  border: none; /* Remove border */
-  color: black; /* Black icon */
+/* Button styles */
+.icon-button {
+  background: none;
+  border: none;
+  color: black; /* Set icon color to black */
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
   cursor: pointer;
+}
+
+.icon-button:hover {
+  color: #555;
+}
+
+.icon-button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Dialog content styling */
+.dialog-content {
+  position: fixed; /* Fix the dialog to the viewport */
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Offset by half its size for perfect centering */
+  z-index: 1050; /* Ensure it appears above other elements */
+  padding: 16px;
+  background-color: #fff; /* Ensure a clean background */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for focus */
+  max-width: 500px; /* Limit the width of the dialog */
+  width: 90%; /* Responsive width for smaller screens */
+}
+
+
+/* Dialog title and description */
+.dialog-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: black; /* Ensure title text is black */
+}
+
+.dialog-description {
+  font-size: 0.9rem;
+  color: black; /* Ensure description text is black */
+  margin-bottom: 16px;
+}
+
+/* Form inputs and labels */
+label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: black; /* Ensure label text is black */
+}
+
+input {
+  color: black; /* Ensure input text is black */
+  background-color: #f9f9f9; /* Light gray input background */
+  border: 1px solid #ccc; /* Subtle border */
+  border-radius: 5px;
+  padding: 8px;
   font-size: 1rem;
+  width: 100%; /* Full width for inputs */
 }
 
-.ingredients-list li .icon-button:hover {
-  color: #555; /* Slightly lighter gray on hover */
+input::placeholder {
+  color: #888; /* Subtle placeholder text color */
 }
 
+input:focus {
+  outline: none;
+  border-color: #646cff; /* Blue border on focus */
+}
 
+/* Button styles */
+.icon-button {
+  background: none;
+  border: none;
+  color: black; /* Set icon color to black */
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
 
+.icon-button:hover {
+  color: #555; /* Slightly lighter color on hover */
+  background: none;
+}
+
+/* Compact footer button hover */
+.card-footer button {
+  padding: 4px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.card-footer button:hover {
+  transform: scale(1.05);
+}
+
+/* Scroll area styling */
+.scroll-area {
+  height: 20px;
+  width: 50px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  color: black; /* Ensure text in scroll area is black */
+}

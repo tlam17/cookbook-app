@@ -1,0 +1,41 @@
+/* Navbar container */
+.navbar {
+    display: flex;
+    align-items: center; /* Vertically center items */
+    justify-content: space-between; /* Space between title and buttons */
+    background-color: #000; /* Black background */
+    color: #fff; /* White text */
+    padding: 12px 20px; /* Add padding inside the navbar */
+    position: sticky; /* Stick to the top during scrolling */
+    top: 0;
+    z-index: 1000; /* Ensure the navbar stays above other elements */
+    width: 100%; /* Full viewport width */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    box-sizing: border-box; /* Include padding and borders in element's total width/height */
+  }
+  
+  /* Navbar content container */
+  .navbar-container {
+    display: flex;
+    justify-content: space-between; /* Space between the title and buttons */
+    align-items: center; /* Center items vertically */
+    width: 100%; /* Full width */
+    max-width: 1200px; /* Optional: Limit the content width for better layout on larger screens */
+    margin: 0 auto; /* Center the container horizontally */
+  }
+  
+  /* Navbar title */
+  .navbar-title h1 {
+    font-size: 1.5rem; /* Adjust title font size */
+    font-weight: bold; /* Make the title bold */
+    margin: 0; /* Remove default margin */
+  }
+  
+  /* Navbar buttons container */
+  .navbar-buttons {
+    display: flex; /* Display buttons in a row */
+    gap: 12px; /* Add spacing between buttons */
+  }
+  
+ 
+  
