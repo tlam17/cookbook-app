@@ -1,41 +1,95 @@
 /* Navbar container */
 .navbar {
-    display: flex;
-    align-items: center; /* Vertically center items */
-    justify-content: space-between; /* Space between title and buttons */
-    background-color: #000; /* Black background */
-    color: #fff; /* White text */
-    padding: 12px 20px; /* Add padding inside the navbar */
-    position: sticky; /* Stick to the top during scrolling */
-    top: 0;
-    z-index: 1000; /* Ensure the navbar stays above other elements */
-    width: 100%; /* Full viewport width */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    box-sizing: border-box; /* Include padding and borders in element's total width/height */
-  }
+  display: flex;
+  align-items: center; /* Vertically center items */
+  justify-content: space-between; /* Space between title and buttons */
+  background-color: #000; /* Black background */
+  color: #fff; /* White text */
+  padding: 12px 20px; /* Add padding inside the navbar */
+  position: sticky; /* Stick to the top during scrolling */
+  top: 0;
+  z-index: 1000; /* Ensure the navbar stays above other elements */
+  width: 100%; /* Full viewport width */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  box-sizing: border-box; /* Include padding and borders in element's total width/height */
+}
+
+/* Navbar content container */
+.navbar-container {
+  display: flex;
+  justify-content: space-between; /* Space between the title and buttons */
+  align-items: center; /* Center items vertically */
+  width: 100%; /* Full width */
+  max-width: 1200px; /* Optional: Limit the content width for better layout on larger screens */
+  margin: 0 auto; /* Center the container horizontally */
+}
+
+/* Navbar title */
+.navbar-title h1 {
+  font-size: 1.5rem; /* Adjust title font size */
+  font-weight: bold; /* Make the title bold */
+  margin: 0; /* Remove default margin */
+}
+
+/* Hamburger menu icon */
+.navbar-menu-icon {
+  position: absolute; /* Position it independently within the navbar */
+  top: 50%; /* Vertically center the menu icon */
+  left: 20px; /* Align to the far-left edge with some padding */
+  transform: translateY(-50%); /* Adjust to align perfectly in the center vertically */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 25px; /* Icon width */
+  height: 20px; /* Icon height */
+  cursor: pointer; /* Hand cursor for interactivity */
+}
+
+.navbar-menu-icon .menu-line {
+  height: 3px; /* Thickness of each line */
+  background-color: #fff; /* White lines for visibility */
+  border-radius: 2px; /* Round edges of the lines */
+}
+
+/* Sidebar container */
+.navbar-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh; /* Full viewport height */
+  width: 0; /* Start hidden */
+  background-color: #111; /* Sidebar background */
+  overflow-x: hidden; /* Hide horizontal scroll */
+  transition: width 0.3s ease; /* Smooth slide-in animation */
+  z-index: 2000; /* Place above the navbar */
+  padding-top: 60px; /* Space from top for content */
+}
+
+.navbar-sidebar.expanded {
+  width: 250px; /* Width of the extended sidebar */
+}
+
+/* Sidebar content */
+.navbar-sidebar-content {
+  color: #fff;
+  padding: 10px 20px;
+}
   
-  /* Navbar content container */
-  .navbar-container {
-    display: flex;
-    justify-content: space-between; /* Space between the title and buttons */
-    align-items: center; /* Center items vertically */
-    width: 100%; /* Full width */
-    max-width: 1200px; /* Optional: Limit the content width for better layout on larger screens */
-    margin: 0 auto; /* Center the container horizontally */
-  }
-  
-  /* Navbar title */
-  .navbar-title h1 {
-    font-size: 1.5rem; /* Adjust title font size */
-    font-weight: bold; /* Make the title bold */
-    margin: 0; /* Remove default margin */
-  }
-  
-  /* Navbar buttons container */
-  .navbar-buttons {
-    display: flex; /* Display buttons in a row */
-    gap: 12px; /* Add spacing between buttons */
-  }
-  
- 
-  
+/* Close sidebar button */
+.close-sidebar-btn {
+  position: absolute;
+  top: 10px; /* Distance from the top of the sidebar */
+  right: 10px; /* Distance from the right edge of the sidebar */
+  background-color: transparent; /* Transparent background */
+  color: #fff; /* White text for visibility */
+  font-size: 1.5rem; /* Keep the font size of the "X" consistent */
+  padding: 10px; /* Increase clickable area without affecting visual size */
+  border: none; /* Remove default border */
+  cursor: pointer; /* Hand cursor for interactivity */
+  z-index: 2100; /* Ensure it stays above other sidebar content */
+  display: flex; /* Center the "X" visually within the clickable area */
+  justify-content: center;
+  align-items: center;
+  line-height: 1; /* Avoid extra space around the text */
+}
+
