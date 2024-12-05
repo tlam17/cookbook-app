@@ -1,41 +1,176 @@
 /* Navbar container */
 .navbar {
     display: flex;
-    align-items: center; /* Vertically center items */
-    justify-content: space-between; /* Space between title and buttons */
-    background-color: #000; /* Black background */
-    color: #fff; /* White text */
-    padding: 12px 20px; /* Add padding inside the navbar */
-    position: sticky; /* Stick to the top during scrolling */
+    align-items: center;
+    justify-content: space-between;
+    background-color: #000;
+    color: #fff;
+    padding: 12px 20px;
+    position: sticky;
     top: 0;
-    z-index: 1000; /* Ensure the navbar stays above other elements */
-    width: 100%; /* Full viewport width */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    box-sizing: border-box; /* Include padding and borders in element's total width/height */
-  }
-  
-  /* Navbar content container */
-  .navbar-container {
+    z-index: 1000;
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+/* Sidebar container */
+.navbar-sidebar {
+  position: fixed;
+  left: -250px; /* Initially off-screen */
+  top: 0;
+  width: 250px; /* Width of the sidebar */
+  height: 100%;
+  background-color: #333;
+  transition: left 0.3s ease; /* Smooth transition when opening and closing */
+  z-index: 2000; /* Ensure it's above other elements */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Expanded state of the sidebar */
+.navbar-sidebar.expanded {
+  left: 0; /* Sidebar slides into view */
+}
+
+/* Sidebar content */
+.navbar-sidebar-content {
+  color: #fff;
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Add some space between the buttons */
+}
+
+.navbar-sidebar p {
+  margin: 10px 0;
+}
+
+/* Navbar content container */
+.navbar-container {
     display: flex;
-    justify-content: space-between; /* Space between the title and buttons */
-    align-items: center; /* Center items vertically */
-    width: 100%; /* Full width */
-    max-width: 1200px; /* Optional: Limit the content width for better layout on larger screens */
-    margin: 0 auto; /* Center the container horizontally */
-  }
-  
-  /* Navbar title */
-  .navbar-title h1 {
-    font-size: 1.5rem; /* Adjust title font size */
-    font-weight: bold; /* Make the title bold */
-    margin: 0; /* Remove default margin */
-  }
-  
-  /* Navbar buttons container */
-  .navbar-buttons {
-    display: flex; /* Display buttons in a row */
-    gap: 12px; /* Add spacing between buttons */
-  }
-  
- 
-  
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Navbar title */
+.navbar-title h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* Navbar buttons container */
+.navbar-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+/* Navbar buttons */
+.navbar-button {
+    background-color: transparent;
+    color: inherit;
+    border: 1px solid #fff;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    width: 100%; /* Make buttons take full width */
+}
+
+.navbar-button:hover {
+    background-color: #fff;
+    color: #000;
+}
+
+/* Hamburger menu icon */
+.navbar-menu-icon {
+  position: absolute; /* Position it independently within the navbar */
+  top: 50%; /* Vertically center the menu icon */
+  left: 20px; /* Align to the far-left edge with some padding */
+  transform: translateY(-50%); /* Adjust to align perfectly in the center vertically */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 25px; /* Icon width */
+  height: 20px; /* Icon height */
+  cursor: pointer; /* Hand cursor for interactivity */
+}
+
+.navbar-menu-icon .menu-line {
+  height: 3px; /* Thickness of each line */
+  background-color: #fff; /* White lines for visibility */
+  border-radius: 2px; /* Round edges of the lines */
+}
+
+/* Close sidebar button */
+.close-sidebar-btn {
+  position: absolute;
+  top: 10px; /* Distance from the top of the sidebar */
+  right: 10px; /* Distance from the right edge of the sidebar */
+  background-color: transparent; /* Transparent background */
+  color: #fff; /* White text for visibility */
+  font-size: 1.5rem; /* Keep the font size of the "X" consistent */
+  padding: 10px; /* Increase clickable area without affecting visual size */
+  border: none; /* Remove default border */
+  cursor: pointer; /* Hand cursor for interactivity */
+  z-index: 2100; /* Ensure it stays above other sidebar content */
+  display: flex; /* Center the "X" visually within the clickable area */
+  justify-content: center;
+  align-items: center;
+  line-height: 1; /* Avoid extra space around the text */
+}
+
+
+
+/* Add Recipe Dialog Content */
+.dialog-content.add-recipe {
+    width: 90%;
+    max-width: 500px;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #000;
+    position: relative;
+    box-sizing: border-box;
+}
+
+    /* Inputs for Add Recipe */
+    .dialog-content.add-recipe input,
+    .dialog-content.add-recipe select,
+    .dialog-content.add-recipe textarea {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1rem;
+        box-sizing: border-box;
+    }
+
+    /* Specific textarea style */
+    .dialog-content.add-recipe textarea {
+        background-color: #fff;
+        color: #000;
+    }
+
+    /* Submit button in Add Recipe dialog */
+    .dialog-content.add-recipe button {
+        background-color: #000;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: bold;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+        .dialog-content.add-recipe button:hover {
+            background-color: #fff;
+            color: #000;
+        }
